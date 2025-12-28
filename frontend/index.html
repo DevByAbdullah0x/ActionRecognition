@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Action Recognition</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    
+    :root { 
+      --bg-dark: #0a0e1a;
+      --bg-card: rgba(20, 25, 45, 0.7);
+      --muted: #94a3b8;
+      --accent: #6366f1;
+      --accent-bright: #818cf8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --glow: rgba(99, 102, 241, 0.4);
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+    
+    @keyframes glow {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+    
+    body { 
+      font-family: 'Inter', system-ui, sans-serif; 
+      background: #0a0e1a;
+      color: #f1f5f9; 
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+      animation: float 15s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    body::after {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(99, 102, 241, 0.03) 50%, 
+        transparent 70%);
+      animation: shimmer 20s linear infinite;
+      pointer-events: none;
+    }
+    
+    .nav { 
+      background: rgba(10, 14, 26, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    .nav-inner { 
+      max-width: 1300px; 
+      margin: 0 auto; 
+      padding: 20px 40px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+    }
+    
+    .brand { 
+      font-weight: 900; 
+      font-size: 24px;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      background-size: 200% 200%;
+      animation: gradient 5s ease infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5));
+    }
+    
+    .nav-tag {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+      padding: 8px 18px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-bright);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+    }
+    
+    .nav-tag::before {
+      content: '●';
+      color: var(--success);
+      animation: glow 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px var(--success));
+    }
+    
+    .container { 
+      max-width: 1300px; 
+      margin: 0 auto; 
+      padding: 60px 40px; 
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+      position: relative;
+    }
+    
+    .hero h1 {
+      font-size: 64px;
+      font-weight: 900;
+      margin-bottom: 24px;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #ffffff 0%, #6366f1 50%, #ec4899 100%);
+      background-size: 200% 200%;
+      animation: gradient 8s ease infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 40px rgba(99, 102, 241, 0.3));
+      line-height: 1.1;
+    }
+    
+    .hero p {
+      font-size: 20px;
+      color: var(--muted);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-weight: 500;
+    }
+    
+    .grid { 
+      display: grid; 
+      grid-template-columns: 1.1fr 1fr; 
+      gap: 40px; 
+    }
+    
+    .card { 
+      background: var(--bg-card);
+      backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 32px;
+      padding: 40px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+      transition: left 0.5s;
+    }
+    
+    .card:hover::before {
+      left: 100%;
+    }
+    
+    .card:hover {
+      border-color: rgba(99, 102, 241, 0.5);
+      transform: translateY(-8px);
+      box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.5),
+        0 0 60px rgba(99, 102, 241, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    
+    .card-header {
+      margin-bottom: 32px;
+    }
+    
+    .card-title { 
+      font-size: 28px; 
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+    
+    .card-subtitle { 
+      color: var(--muted); 
+      font-size: 15px;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+    
+    .form-group {
+      margin-bottom: 24px;
+    }
+    
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-bright);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .input-row { 
+      display: flex; 
+      gap: 12px;
+    }
+    
+    .file { 
+      flex: 1;
+      background: rgba(10, 14, 26, 0.9);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #f1f5f9;
+      border-radius: 16px;
+      padding: 16px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .file:hover {
+      border-color: var(--accent);
+      background: rgba(10, 14, 26, 1);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .file:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    }
+    
+    .btn { 
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      padding: 16px 36px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 8px 24px rgba(99, 102, 241, 0.4),
+        0 0 40px rgba(99, 102, 241, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn:hover:not(:disabled)::before {
+      left: 100%;
+    }
+    
+    .btn:hover:not(:disabled) {
+      transform: translateY(-4px);
+      box-shadow: 
+        0 12px 32px rgba(99, 102, 241, 0.5),
+        0 0 60px rgba(99, 102, 241, 0.4);
+    }
+    
+    .btn:active:not(:disabled) {
+      transform: translateY(-2px);
+    }
+    
+    .btn:disabled { 
+      background: rgba(51, 65, 85, 0.5);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    
+    .preview-container {
+      position: relative;
+      background: rgba(10, 14, 26, 0.8);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 20px;
+      overflow: hidden;
+      min-height: 450px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.5);
+    }
+    
+    .preview { 
+      width: 100%;
+      max-height: 550px;
+      object-fit: contain;
+      display: block;
+    }
+    
+    .preview-placeholder {
+      color: var(--muted);
+      font-size: 16px;
+      text-align: center;
+      padding: 60px;
+    }
+    
+    .result-container {
+      margin-top: 24px;
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1));
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(34, 197, 94, 0.2);
+    }
+    
+    .result { 
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
+    }
+    
+    .result::before {
+      content: '✓';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--success);
+      color: white;
+      border-radius: 50%;
+      font-size: 16px;
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+    }
+    
+    .error { 
+      color: var(--danger);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .error::before {
+      content: '⚠';
+      font-size: 24px;
+      animation: glow 1s ease-in-out infinite;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(99, 102, 241, 0.3);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 1024px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 48px; }
+      .nav-inner { padding: 18px 24px; }
+      .container { padding: 40px 24px; }
+      .card { padding: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="brand">⚡Action Recognition</div>
+      <div class="nav-tag">API Active</div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <div class="hero">
+      <h1>Action Recognition by Abdullah</h1>
+      <p>Identify and annotate human actions in images using a CNN+LSTM model trained on Stanford 40 Actions</p>
+    </div>
+    
+    <div class="grid">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Upload & Analyze</h2>
+          <p class="card-subtitle">Upload an image and get instant intelligent analysis using Stanford 40 Actions</p>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Image File</label>
+          <div class="input-row">
+            <input id="file" type="file" class="file" accept="image/*">
+            <button id="submit" class="btn" disabled>Analyze</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Analysis Results</h2>
+          <p class="card-subtitle">View annotated predictions with confidence scores</p>
+        </div>
+        
+        <div class="preview-container">
+          <img id="preview" class="preview" alt="Preview" style="display: none;">
+          <div id="placeholder" class="preview-placeholder">
+            <div style="font-size: 72px; opacity: 0.4; margin-bottom: 20px; animation: float 4s ease-in-out infinite;">🖼️</div>
+            <div style="font-size: 18px; font-weight: 600;">Your results will appear here</div>
+          </div>
+        </div>
+        
+        <div id="resultContainer" style="display: none;" class="result-container">
+          <div id="result" class="result"></div>
+        </div>
+        
+        <div id="errorContainer" style="display: none;" class="result-container" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1)); border-color: rgba(239, 68, 68, 0.3);">
+          <div id="error" class="error"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const fileEl = document.getElementById("file");
+    const btnEl = document.getElementById("submit");
+    const previewEl = document.getElementById("preview");
+    const placeholderEl = document.getElementById("placeholder");
+    const resultEl = document.getElementById("result");
+    const errorEl = document.getElementById("error");
+    const resultContainer = document.getElementById("resultContainer");
+    const errorContainer = document.getElementById("errorContainer");
+    let currentFile = null;
+    
+    fileEl.addEventListener("change", e => {
+      const f = e.target.files && e.target.files[0];
+      currentFile = f || null;
+      btnEl.disabled = !currentFile;
+      resultContainer.style.display = "none";
+      errorContainer.style.display = "none";
+      
+      if (f && f.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = () => { 
+          previewEl.src = reader.result;
+          previewEl.style.display = "block";
+          placeholderEl.style.display = "none";
+        };
+        reader.readAsDataURL(f);
+      } else {
+        previewEl.style.display = "none";
+        placeholderEl.style.display = "block";
+        placeholderEl.innerHTML = '<div style="font-size: 72px; opacity: 0.4; margin-bottom: 20px; animation: float 4s ease-in-out infinite;">🖼️</div><div style="font-size: 18px; font-weight: 600;">Your AI-powered results will appear here</div>';
+      }
+    });
+    
+    btnEl.addEventListener("click", async () => {
+      if (!currentFile) return;
+      btnEl.disabled = true;
+      btnEl.innerHTML = '<span class="loading"></span> Analyzing...';
+      resultContainer.style.display = "none";
+      errorContainer.style.display = "none";
+      
+      try {
+        const fd = new FormData();
+        fd.append("file", currentFile);
+        const res = await fetch("/api/predict", { method: "POST", body: fd });
+        
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(txt || `HTTP ${res.status}`);
+        }
+        
+        const data = await res.json();
+        resultEl.textContent = `${data.label} (${(data.confidence*100).toFixed(1)}% confidence)`;
+        resultContainer.style.display = "block";
+        previewEl.src = "data:image/jpeg;base64," + data.image_base64;
+        previewEl.style.display = "block";
+        placeholderEl.style.display = "none";
+      } catch (e) {
+        errorEl.textContent = `${e.message ?? e}`;
+        errorContainer.style.display = "block";
+        errorContainer.style.background = "linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))";
+        errorContainer.style.borderColor = "rgba(239, 68, 68, 0.3)";
+      } finally {
+        btnEl.disabled = false;
+        btnEl.innerHTML = 'Analyze';
+      }
+    });
+  </script>
+</body>
+</html>
