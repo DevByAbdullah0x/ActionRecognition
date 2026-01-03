@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="assets/preview.svg" alt="Action Recognition UI Preview" />
+</p>
 # Action Recognition (Stanford 40, FastAPI + PyTorch)
 
 Identify human actions in images using a CNN+LSTM model trained for Stanford 40 Actions, served via FastAPI with a simple web UI.
@@ -75,4 +78,3 @@ curl -Method POST -Form @{ file = Get-Item "C:\path\to\image.jpg" } http://127.0
 
 ## License
 This project is intended for educational and demonstration purposes. Check the Stanford 40 dataset license for any dataset usage constraints.
-
