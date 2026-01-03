@@ -1,7 +1,7 @@
 # Action Recognition (Stanford 40, FastAPI + PyTorch)
 
 <p align="center">
-  <img src="assets/overview.png" alt="Full UI overview" width="900">
+  <img src="assets/overview.jpg" alt="Full UI overview" width="900">
 </p>
 
 Identify human actions in images using a CNN+LSTM model trained for Stanford 40 Actions, served via FastAPI with a simple web UI.
@@ -53,19 +53,19 @@ http://127.0.0.1:8000/
 ## Screenshots
 
 <p align="center">
-  <img src="assets/cutting_vegetables.png" alt="cutting_vegetables result" width="600">
+  <img src="assets/cutting_vegetables.jpg" alt="cutting_vegetables result" width="600">
 </p>
 
 <p align="center">
-  <img src="assets/smoking.png" alt="smoking result" width="600">
+  <img src="assets/smoking.jpg" alt="smoking result" width="600">
 </p>
 
 <p align="center">
-  <img src="assets/writing_on_a_book.png" alt="writing_on_a_book result" width="600">
+  <img src="assets/writing_on_a_book.jpg" alt="writing_on_a_book result" width="600">
 </p>
 
 <p align="center">
-  <img src="assets/running.png" alt="running result" width="600">
+  <img src="assets/running.jpg" alt="running result" width="600">
 </p>
 
 ## API Endpoints
